@@ -31,8 +31,7 @@ class Scraper:
     def run(self, areas):
         allPosts = []
         for a in areas:
-            posts = self.scrapeArea(a)
-            allPosts += posts
+            allPosts += self.scrapeArea(a)
         return allPosts
 
     def scrapeArea(self, area):
