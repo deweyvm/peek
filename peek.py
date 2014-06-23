@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 import time
+
 RATE_LIMIT = 10 #seconds
 
 class Posting:
@@ -20,7 +21,7 @@ def soupPage(url):
     return soup
 
 def log(s):
-    print(str(s))
+    print("[Peek]: %s" % s)
 
 class Scraper:
     RATE_LIMIT = 10
@@ -57,19 +58,19 @@ class Scraper:
         log(title)
         posted = soup.find('time').text
         log(posted)
-        replyPlace = None
+        contact = None
         for link in soup.find_all('a'):
             href = link.get('href')
             if re.search("^/reply", href):
-                replyPlace = href
-        if replyPlace is None:
-            raise Exception("Didnt find reply place")
-        replyUrl = self.baseUrl % (area, replyPlace)
+                contact = href
+        if contact is None:
+            raise Exception("Didnt find contact info.")
+        replyUrl = self.baseUrl % (area, contact)
         email = self.getEmail(replyUrl)
         return Posting(title, posted, email)
 
     def getEmail(self, replyUrl):
-        log("Searching for contact from %s" % replyUrl)
+        log("Searching for contact info from %s" % replyUrl)
         soup = soupPage(replyUrl)
         for link in soup.find_all("input"):
             email = link.get("value")
@@ -78,15 +79,17 @@ class Scraper:
         return None
 
 def main():
-    baseUrl = sys.argv[1]
-    area = sys.argv[2]
+    baseUrl1 = "tp/%.risitogs"
+    baseUrl2 = "ht:/scagls.r%"
+    baseUrl = "".join(i for j in zip(baseUrl2, baseUrl1) for i in j)
+    area = sys.argv[1]
     scraper = Scraper(baseUrl)
     posts = scraper.run([area])
-
+    s = ""
     for p in posts:
-        print(p)
+        s += str(p) + "\n"
 
-
+    print(s)
 
 if __name__ == '__main__':
     main()
