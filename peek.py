@@ -3,8 +3,12 @@ from bs4 import BeautifulSoup
 import urllib.request
 import re
 import time
+import random
 
-RATE_LIMIT = 10 #seconds
+def getRateLimit():
+    base = 240
+    r = base*random.random()
+    return base + r
 
 class Posting:
     def __init__(self, title, date, contact):
@@ -15,7 +19,7 @@ class Posting:
         return "Title: %s\nDate: %s\nContact: %s" % (self.title, self.date, self.contact)
 
 def soupPage(url):
-    time.sleep(RATE_LIMIT)
+    time.sleep(getRateLimit())
     data = urllib.request.urlopen(url).read()
     soup = BeautifulSoup(data)
     return soup
