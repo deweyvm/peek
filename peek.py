@@ -39,7 +39,10 @@ class Scraper:
         return allPosts
 
     def scrapeArea(self, area):
-        searchPart = "/search/eng?query=+"
+
+        searchPart1 = "/erhegqey+"
+        searchPart2 = "sac/n?ur="
+        searchPart = interleave(searchPart1, searchPart2)
         searchUrl = self.baseUrl % (area, searchPart)
         soup = soupPage(searchUrl)
         pages = []
@@ -81,13 +84,16 @@ class Scraper:
             return email
         return None
 
+def interleave(s1, s2):
+    return "".join(i for j in zip(s1, s2) for i in j)
+
 def main():
     baseUrl1 = "tp/%.risitogs"
     baseUrl2 = "ht:/scagls.r%"
-    baseUrl = "".join(i for j in zip(baseUrl2, baseUrl1) for i in j)
-    area = sys.argv[1]
+    baseUrl = interleave(baseUrl2, baseUrl1)
+    areas = sys.argv[1].split(" ")
     scraper = Scraper(baseUrl)
-    posts = scraper.run([area])
+    posts = scraper.run(areas)
     s = ""
     for p in posts:
         s += str(p) + "\n"
